@@ -149,13 +149,9 @@ Once approved:
 
 ---
 
-### Step 11 — Content prompt and close (last)
+### Step 11 — Close
 
-"Want to create a post about what you accomplished this session? Invoke `@content-writer`."
-
-After the builder responds (yes or no): "Session closed. `/clear` to start fresh."
-
-This is always the last step. Do not skip it.
+"Session closed. `/clear` to start fresh."
 
 ---
 
@@ -168,8 +164,6 @@ Updated:
 - [list of files updated]
 
 Next session: [first priority]
-
-Want to write a post about this session? → @content-writer
 ```
 
 ---
