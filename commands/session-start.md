@@ -115,7 +115,7 @@ Output a brief session summary:
 [Task title and full task spec from plan.md — including files, function signatures, acceptance criteria]
 
 ---
-Ready to begin? (yes / no, or tell me what to change first)
+Ready to invoke `@dev`? (yes / no, or tell me what to change first)
 ```
 
 ---
