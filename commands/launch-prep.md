@@ -159,7 +159,15 @@ Do not auto-proceed. Do not bundle acknowledgments. One at a time.
 
 ---
 
-### Step 5 — Final recommendation
+### Step 5 — Profile update check
+
+Ask: "Does `profile.md` need updating? You're launching — did you ship a new project, hit a milestone, or has your story changed?"
+
+If yes: note what to update. The builder updates `profile.md` directly — this command does not modify it.
+
+---
+
+### Step 6 — Final recommendation
 
 After all items are acknowledged:
 

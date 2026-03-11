@@ -48,25 +48,7 @@ Before generating the summary:
 
 ---
 
-### Step 5 — Framework issues check
-
-Ask the builder: "Did any framework component give bad output this session? If yes, I'll note it in `docs/framework-issues.md`."
-
-If yes: record the component, what it did wrong, and what the correct behavior should be.
-
-**Two-strikes rule:** If you are logging a framework issue, check whether the same issue has already been logged in `docs/framework-issues.md`. If it has appeared before, this is a framework problem — flag it explicitly: "This issue has appeared before. The framework file needs to be fixed, not the conversation. Which file should we update?"
-
----
-
-### Step 6 — Profile update check
-
-Ask: "Does `profile.md` need updating? Did you ship a new project, hit a milestone, or has something changed about your story or the narrative behind your work?"
-
-If yes: note what to update. The builder updates `profile.md` directly — this command does not modify it.
-
----
-
-### Step 7 — Manifest accuracy check
+### Step 5 — Manifest accuracy check
 
 Review the manifest against what happened this session:
 - Any new MCPs added or removed?
@@ -77,7 +59,7 @@ Note any inaccuracies. Ask: "Is the manifest still accurate? If not, I'll flag w
 
 ---
 
-### Step 8 — Generate documentation summary
+### Step 6 — Generate documentation summary
 
 Prepare a concise summary of what needs to be written:
 
@@ -127,7 +109,7 @@ Approve these documentation updates? (yes / no)
 
 ---
 
-### Step 9 — Wait for approval
+### Step 7 — Wait for approval
 
 Do not make any file changes until the builder approves.
 
@@ -135,7 +117,7 @@ If rejected or revisions requested: ask what should change, revise the summary, 
 
 ---
 
-### Step 10 — Execute updates (after approval only)
+### Step 8 — Execute updates (after approval only)
 
 Once approved:
 1. Update `docs/session-handoff.md`
@@ -149,7 +131,7 @@ Once approved:
 
 ---
 
-### Step 11 — Close
+### Step 9 — Close
 
 "Session closed. `/clear` to start fresh."
 
@@ -176,3 +158,5 @@ Next session: [first priority]
 - If nothing changed in a doc category, state that explicitly
 - Flag anything uncertain for builder decision
 - Two-strikes rule: if a framework issue appears in `docs/framework-issues.md` a second time, fix the framework file — do not log it again and move on
+- Framework issues: if a framework component gave bad output this session, volunteer to log it in `docs/framework-issues.md` — do not ask proactively every session
+- Profile updates: handled at `@launch-prep` — not a session-end concern unless the builder raises it
