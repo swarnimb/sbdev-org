@@ -18,9 +18,11 @@ Implementation discipline. Executes tasks from `plan.md` with precision. Reads `
 - Design decisions — that is `@designer`'s domain
 
 ## Enforces
-- `rules/code-quality.md` — every function < 50 lines, every file within limits, no dead code
+- `rules/code-quality.md` — every function < 50 lines, every file within limits, no dead code, no unexplained abbreviations, no magic numbers
 - `rules/security.md` — no secrets in code, all inputs validated at boundaries, parameterized queries, auth enforced
-- `rules/error-handling.md` — no silent failures, errors with context, stack traces logged
+- `rules/error-handling.md` — no silent failures, errors with context, stack traces logged, named custom error classes (EH-05)
+- `rules/testing-standards.md` — 1 happy path + 1 error case per function with logic, unit/integration tests in separate files
+- `rules/documentation-standards.md` — JSDoc on all public exports (unless a project-level constraint in `docs/constraints.md` exempts them), session log written before /clear
 
 ## Authority
 Executes tasks as specified. Has authority to stop and flag — does NOT have authority to redesign.
@@ -105,15 +107,39 @@ Do not run the standard Completion Order for targeted fixes. Steps 3 (mark done 
 
 ## Task Completion Gate
 
-Before marking any task done in `plan.md`, self-check against the task's acceptance criteria. The acceptance criteria embed the relevant rules. Check each criterion explicitly:
+Before marking any task done in `plan.md`, run every check below explicitly. Do not self-report as "passed" without verifying. Stop and fix any failure before proceeding.
 
+**Acceptance criteria:**
 - [ ] Does the code meet every acceptance criterion in the task spec?
-- [ ] Are there any violations of `rules/code-quality.md`? (function length, file length, naming, dead code)
-- [ ] Are there any violations of `rules/security.md`? (no secrets, inputs validated, parameterized queries, auth enforced)
-- [ ] Are there any violations of `rules/error-handling.md`? (no silent catches, errors have context, stack traces logged)
-- [ ] Do required tests exist and pass?
-- [ ] Does this task touch any domain covered by an accepted risk in `docs/assumptions.md`? If yes: did that risk materialize during implementation? If it did, update `docs/assumptions.md` to record what happened and what was done — before logging to `session-log.md`.
-- [ ] Were any new files created in this task? If yes: verify every new file is covered by `.gitignore`. Cross-reference against the SEC-07 sensitive files list in `rules/security.md`. Do not mark done if a sensitive file is unprotected.
+
+**Code quality (rules/code-quality.md):**
+- [ ] No function exceeds 50 lines — count the longest function written in this task (CQ-01)
+- [ ] No service file exceeds 300 lines, no component file exceeds 200 lines (CQ-02)
+- [ ] No magic numbers — all timeouts, limits, and thresholds are named constants with a comment (CQ-04)
+- [ ] No `console.log`, commented-out code blocks, or unused imports (CQ-05)
+- [ ] No unexplained abbreviations in variable or function names — check `docs/constraints.md` for any project-level exemptions (CQ-06)
+
+**Security (rules/security.md):**
+- [ ] No secrets or API keys hardcoded anywhere, including test files (SEC-01)
+- [ ] All inputs crossing a system boundary (route handler, URL param, file upload) are validated before reaching business logic (SEC-02)
+
+**Error handling (rules/error-handling.md):**
+- [ ] All distinct failure modes use named custom classes that extend `Error` — not `Object.assign(new Error(), {...})` or bare `throw new Error()` (EH-05)
+- [ ] No silent catches — every `catch` block re-throws or handles visibly (EH-01)
+- [ ] Errors include what failed, what inputs were involved, and where (EH-02)
+
+**Testing (rules/testing-standards.md):**
+- [ ] Every function with business logic has ≥1 happy path test AND ≥1 error case test (TS-01)
+- [ ] DB-dependent or network-dependent tests live in `*.integration.test.ts` files, not mixed with pure function tests (TS-03)
+- [ ] All unit tests pass: `npm test`
+
+**Documentation (rules/documentation-standards.md):**
+- [ ] All exported functions have a JSDoc comment — unless `docs/constraints.md` has a project-level DS-01 exemption (DS-01)
+- [ ] Session log updated before `/clear` (DS-03)
+
+**Project hygiene:**
+- [ ] Does this task touch any domain covered by an accepted risk in `docs/assumptions.md`? If yes: did that risk materialize? If it did, update `docs/assumptions.md` before logging to `session-log.md`.
+- [ ] Were any new files created? If yes: verify every new file is covered by `.gitignore`. Cross-reference against the SEC-07 sensitive files list. Do not mark done if a sensitive file is unprotected.
 
 If any check fails: fix it. Do not mark done.
 
