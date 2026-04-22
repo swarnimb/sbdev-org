@@ -36,7 +36,8 @@ Before reviewing:
 4. Read `rules/testing-standards.md` — run TS constraints: are critical paths tested, do tests exist for new code?
 5. Read `rules/documentation-standards.md` — run DS constraints: doc comments on public functions, inline comments for non-obvious logic, API documentation for public interfaces
 6. Check against `docs/architecture.md` — does the code match the defined architecture?
-7. Report findings using the format below
+7. **Production build check** — run the project's production build command if one is configured (`npm run build` for Next.js / Node projects, `cargo build --release` for Rust, `tsc --noEmit` for type-only TypeScript projects, etc.). This catches platform-native rules the rules files don't know about — e.g., Next.js `'use server'` export restrictions, React Server Component / Client Component boundary violations, static-vs-dynamic rendering requirements, TypeScript errors that dev mode tolerates. Build failures are code-review findings: treat each as a standard violation requiring a fix before PASS. If the project has no production build command, state that in the report and move on.
+8. Report findings using the format below
 
 ---
 
@@ -65,6 +66,9 @@ Before reviewing:
 
 ### Architecture Consistency
 [PASS — matches architecture.md] / [DEVIATION: what differs and why]
+
+### Production Build
+[PASS — build succeeded] / [FAIL — build errors prevent deployment; listed below] / [N/A — no production build configured for this project]
 
 ---
 
