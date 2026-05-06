@@ -36,7 +36,10 @@ This is the routing hub for all @ invocations. When an @ marker is used, find it
 - **Skills** are execution tools. Pure execution, no opinions or authority.
 - **Rules** enforce at defined gates (task completion + `@code-review`). Never manually invoked.
 
-**If invocation not found:** Tell the user it doesn't exist and show available options.
+**If invocation not found in the table above:**
+1. Read the project's `CLAUDE.md` (in the current working directory)
+2. Check for a `## Project-Specific Routing` table — if the invocation is listed there, read the file it points to (path is relative to project root) and follow its instructions
+3. If not found in either table: tell the user it doesn't exist and show available options
 
 ## Adding New Invocations
 

@@ -4,6 +4,16 @@
 
 ---
 
+## Project-Specific Routing
+
+Project-specific agents, skills, and commands generated during `@recruit` are listed here. The global framework router (`sbdev-private/CLAUDE.md`) falls back to this table when an `@invocation` is not found in the global routing table.
+
+| Invocation | Type | File |
+|---|---|---|
+<!-- Add rows here as project-specific components are generated. Format: | `@name` | Agent / Skill / Command | `relative/path/from/project/root.md` | -->
+
+---
+
 ## First: Read the Manifest
 
 Read `manifest.md` before anything else. It defines which agents, rules, skills, and commands are active for this project. Do not invoke any component not listed in the manifest.
