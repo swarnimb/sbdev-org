@@ -44,6 +44,7 @@ Review the session from a product perspective:
 Before generating the summary:
 - Do any updates conflict with existing documentation?
 - Are there inconsistencies between what was done and what docs say?
+- Does the handoff's "next task" match the first `[ ]` in the active plan file (skipping `[~]`-superseded)? If not, resolve before writing — fix the handoff, mark the plan task done/superseded, or document the deferral.
 - If yes, surface the conflict and options to resolve
 
 ---
