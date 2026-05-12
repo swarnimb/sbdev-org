@@ -192,6 +192,80 @@ Before staging any files for commit: verify none of the above are included. If a
 
 ---
 
+### SEC-08: Server Action exports are public — minimize the surface
+
+**Constraint:** Every async function exported from a file with `'use server'` at the top becomes a Server Action callable from the client. Action IDs are emitted to `.next/server/server-reference-manifest.json` and referenced from client chunks. There is no module-private convention inside a `'use server'` file. Exactly one `'use server'` file per logical surface, exposing only the intended public entry points. Helpers that must throw or whose timing or error-shape is sensitive go in a separate file WITHOUT the `'use server'` directive (e.g., `lib/auth-internal.ts`).
+
+**Applies to:** any Next.js project using Server Actions.
+
+**Rationale:** A "helper" function colocated with a public Server Action is not private — it is a second public endpoint. Attackers calling it directly via the `Next-Action` header bypass any wrapper the public entry point relied on (timing floor, error catching, constant-time response). Iterative audit loops have shipped exactly this leak.
+
+**Pass:**
+```typescript
+// app/auth/actions.ts
+'use server'
+import { attemptMagicLink } from '@/lib/auth-internal' // no 'use server' in this file
+
+export async function signInWithMagicLink(formData: FormData) {
+  // wraps the throwing helper with constant-time + uniform response
+  await runConstantTime(() => attemptMagicLink(formData))
+}
+```
+
+**Fail:**
+```typescript
+// app/auth/actions.ts
+'use server'
+
+// Both of these are publicly callable Server Actions.
+export async function signInWithMagicLink(formData: FormData) { /* public */ }
+export async function attemptMagicLink(formData: FormData) { /* NOT private — leaks */ }
+```
+
+**Enforcement note:** After `next build`, inspect `.next/server/server-reference-manifest.json`. It should list only the intended action IDs. If an "internal" helper appears alongside the entry point, the helper is publicly callable — refactor it into a non-`'use server'` module.
+
+---
+
+### SEC-09: Auth flows must be uniform across all observable channels
+
+**Constraint:** "Uniform response" in an auth flow is not just UI text. An auth flow that distinguishes outcomes through any observable channel leaks registration or account state. Uniformity must be enforced across every channel below:
+
+- **UI text:** the user-facing message is identical regardless of outcome.
+- **Response body shape:** the wire-level response payload is identical (typically the Server Action returns `void`/`undefined` and never throws to the wire — throwing helpers are wrapped).
+- **Response timing:** wall-clock response time is bounded by a constant-time floor (e.g., `MIN_DURATION_MS = 750`). Fast paths pad to the floor; slow paths run over.
+- **Server Action surface:** only one action ID exists for the auth flow. No "internal" helper accidentally exposed (see SEC-08).
+- **Response headers:** `Set-Cookie` and other response headers are identical across outcomes. Watch for Supabase SSR PKCE behavior — switch to `flowType: 'implicit'` if the magic-link path does not need PKCE.
+- **Status codes:** identical across outcomes.
+
+**Applies to:** any auth flow (magic link, OAuth, password reset, email verification) that branches on email or account state.
+
+**Rationale:** Closing one channel makes the next-quietest the dominant attacker oracle. Spec docs that say "uniform response" without enumerating channels lead to iterative audit loops where each fix introduces the next-layer leak. List the channels in spec acceptance criteria so they are designed for, not patched in.
+
+**Pass:**
+```
+# Probe with two emails (one registered, one not):
+#   UI text          → identical
+#   Response body    → both return undefined
+#   Timing           → both ≥ 750ms, within ±20ms
+#   Action surface   → one action ID in server-reference-manifest.json
+#   Set-Cookie       → identical headers
+#   Status codes     → both 200
+```
+
+**Fail:**
+```
+# Any of:
+#   Registered email → 200 + Set-Cookie: sb-pkce-verifier=...
+#   Unregistered     → 200, no Set-Cookie         ← header leak
+#   Registered       → 180ms response
+#   Unregistered     → 740ms response             ← timing leak
+#   Two action IDs in the build manifest          ← surface leak (see SEC-08)
+```
+
+**Enforcement note:** Auth flow specs must list the six channels in acceptance criteria. `@security` audit probes the endpoint with two emails (registered + unregistered) and compares all six channels. Any difference is a leak and blocks task completion.
+
+---
+
 ## Priority
 
 This file has **highest priority** in the conflict resolution hierarchy:
