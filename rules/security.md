@@ -233,7 +233,7 @@ export async function attemptMagicLink(formData: FormData) { /* NOT private — 
 - **UI text:** the user-facing message is identical regardless of outcome.
 - **Response body shape:** the wire-level response payload is identical (typically the Server Action returns `void`/`undefined` and never throws to the wire — throwing helpers are wrapped).
 - **Response timing:** wall-clock response time is bounded by a constant-time floor (e.g., `MIN_DURATION_MS = 750`). Fast paths pad to the floor; slow paths run over.
-- **Server Action surface:** only one action ID exists for the auth flow. No "internal" helper accidentally exposed (see SEC-08).
+- **Server Action surface:** exactly ONE Server Action ID per auth flow (sign-in, sign-out, etc.). Each flow contributes one ID; the union across all flows is the allowlist enforced by `tests/middleware.test.ts` S4. No "internal" helper accidentally exposed (see SEC-08).
 - **Response headers:** `Set-Cookie` and other response headers are identical across outcomes. Watch for Supabase SSR PKCE behavior — switch to `flowType: 'implicit'` if the magic-link path does not need PKCE.
 - **Status codes:** identical across outcomes.
 
