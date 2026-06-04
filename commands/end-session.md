@@ -100,8 +100,12 @@ Prepare a concise summary of what needs to be written:
 ### Conflicts Detected
 [None, or list conflicts and proposed resolution]
 
+### Last Completed / Next Eligible
+- **Last completed:** [TNN @ `<commit ref>` — the task actually finished this session]
+- **Next eligible:** [the active plan file's CURRENT first incomplete `[ ]` task, read verbatim — NOT a forward-looking guess. If the next intended work is not yet a numbered plan task, write "none open — next session must scope <feature> as TNN first"]
+
 ### Next Session Should
-1. [first priority]
+1. [first priority — MUST match "Next eligible" above, or explicitly state why it differs]
 2. [second priority]
 
 ---
@@ -161,3 +165,4 @@ Next session: [first priority]
 - Two-strikes rule: if a framework issue appears in `docs/framework-issues.md` a second time, fix the framework file — do not log it again and move on
 - Framework issues: if a framework component gave bad output this session, volunteer to log it in `docs/framework-issues.md` — do not ask proactively every session
 - Profile updates: handled at `@launch-prep` — not a session-end concern unless the builder raises it
+- The handoff's "Next eligible" / "Next Session Should" MUST be the active plan's first incomplete `[ ]` task (skipping `[~]`), copied verbatim — never a forward-looking guess. If the next intended work is not yet a plan task, say so explicitly rather than naming it as the next task.

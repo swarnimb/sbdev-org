@@ -54,6 +54,8 @@ Load these files in this order:
 
 - **If the most recent entry is from today** — the session is ongoing and the log is current. Do not surface the staleness warning. Continue normally.
 
+**Git-state cross-check (do not rely on the date heuristic alone):** Run `git status` (and check whether the local branch is ahead of its remote). If the working tree has uncommitted changes to files named in the latest `session-log.md` entry, OR the local branch is ahead of its remote, surface "⚠ prior-session work completed but uncommitted/unpushed — `@end-session` may have been skipped" regardless of the log date. The same-day heuristic gives a false "session ongoing" all-clear when a prior same-day session closed without `@end-session`.
+
 **QA status check:** Check `docs/qa-report.md` if it exists. If Status is BLOCKED — surface this before stating the next task:
 
 > "⚠ QA Status: BLOCKED. Resolve all blocking findings and re-run `@qa` before starting new features. If you are currently fixing QA issues, continue. When all fixes are done, re-run `@qa`."
