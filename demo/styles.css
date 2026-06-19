@@ -1,0 +1,570 @@
+/* ============================================================
+   Claude Code Magic — scroll-cinematic
+   © 2026 Swarnim Bagre — All rights reserved.
+   Design system: "command deck"
+   ============================================================ */
+
+:root {
+  --bg: #0a0a0c;
+  --ink: #ededf2;
+  --dim: #7f7f8a;
+  --faint: rgba(255, 255, 255, .06);
+  --accent: #d97757;
+  --accent-soft: #e8a87c;
+  --node: #141419;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: auto; }
+
+/* Lenis smooth-scroll required styles */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+.mono { font-family: 'JetBrains Mono', monospace; }
+
+/* ---------- generic beat / section ---------- */
+.beat {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.bg-grid {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: .4;
+  background-image:
+    linear-gradient(var(--faint) 1px, transparent 1px),
+    linear-gradient(90deg, var(--faint) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(80% 70% at 50% 45%, #000 30%, transparent 92%);
+  -webkit-mask-image: radial-gradient(80% 70% at 50% 45%, #000 30%, transparent 92%);
+}
+
+/* soft vignette over every beat */
+.beat::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(120% 100% at 50% 50%, transparent 55%, rgba(0, 0, 0, .55) 100%);
+}
+
+/* shared kicker / inner */
+.inner { position: relative; z-index: 2; text-align: center; padding: 0 24px; width: 100%; }
+.kick {
+  font-size: clamp(10px, 1.1vw, 11px);
+  letter-spacing: .42em;
+  text-transform: uppercase;
+  color: var(--accent-soft);
+  margin-bottom: 22px;
+}
+
+/* ============================================================
+   ONE CONTINUOUS CINEMATIC (pinned) — premise + discipline + pipeline
+   share this single stage. Beat-specific layers are absolutely
+   positioned inside .stage and driven by the master timeline.
+   ============================================================ */
+.cinematic { padding: 0; }
+
+/* ---- HERO (normal scroll-away section) ---- */
+.hero .inner { display: flex; flex-direction: column; align-items: center; }
+.hero h1 {
+  font-size: clamp(34px, 5.6vw, 66px);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -.02em;
+}
+.hero h1 .b { color: var(--dim); font-weight: 400; }
+.hero .sub {
+  margin-top: 22px;
+  font-size: clamp(14px, 1.6vw, 18px);
+  color: var(--dim);
+  max-width: 44ch;
+}
+
+/* ---- PREMISE overlay (inside the stage, fades + drifts on scrub) ---- */
+.premise-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 32px;
+  will-change: transform, opacity;
+}
+.premise-overlay .kick { margin-bottom: 22px; }
+.premise-overlay h1 {
+  font-size: clamp(34px, 5.2vw, 64px);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -.02em;
+}
+.premise-overlay h1 .b { color: var(--dim); font-weight: 400; }
+.premise-overlay .sub {
+  margin-top: 22px;
+  font-size: clamp(14px, 1.6vw, 18px);
+  color: var(--dim);
+  max-width: 40ch;
+}
+
+/* ---- scroll hint (sits below the stage, fades early) ---- */
+.scrollhint {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6;
+  font-size: 10px;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--dim);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  will-change: opacity;
+}
+.scrollhint .arrow {
+  width: 1px;
+  height: 34px;
+  background: linear-gradient(var(--accent), transparent);
+  animation: drop 1.8s ease-in-out infinite;
+}
+@keyframes drop {
+  0%   { transform: scaleY(.2); transform-origin: top;    opacity: .3; }
+  50%  { transform: scaleY(1);                            opacity: 1; }
+  100% { transform: scaleY(.2); transform-origin: bottom; opacity: .3; }
+}
+
+/* ---- the single clay spine path (vertical → elbow → horizontal rail) ---- */
+.spine-path {
+  stroke: var(--accent);
+  stroke-width: 1.8;
+  fill: none;
+  filter: drop-shadow(0 0 5px rgba(217, 119, 87, .55));
+}
+
+/* ============================================================
+   THE DISCIPLINE — stations along the horizontal rail
+   (positioned absolutely inside the stage like pipeline chips)
+   ============================================================ */
+#disciplineLayer { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
+
+.dstation {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 130px;
+  transform: translateX(-65px);
+  will-change: transform, opacity;
+}
+.dstation .ddot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--node);
+  border: 1.5px solid rgba(255, 255, 255, .2);
+}
+.dstation .dword {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.dlabel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  text-align: center;
+  z-index: 4;
+  font-size: 13px;
+  color: var(--dim);
+  letter-spacing: .02em;
+  will-change: transform, opacity;
+}
+.dlabel .dk {
+  display: block;
+  font-size: 10.5px;
+  letter-spacing: .42em;
+  text-transform: uppercase;
+  color: var(--accent-soft);
+  margin-bottom: 10px;
+}
+.dlabel b { color: var(--ink); font-weight: 500; }
+
+/* ============================================================
+   THE PIPELINE (shares the pinned stage)
+   ============================================================ */
+
+.stage-wrap {
+  position: relative;
+  z-index: 2;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.stage {
+  position: relative;
+  width: 1140px;
+  height: 680px;
+  background: radial-gradient(120% 90% at 50% 0%, #15151b 0%, var(--bg) 62%);
+  border: 1px solid var(--faint);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 40px 120px -40px rgba(0, 0, 0, .85);
+}
+
+.stage-grid {
+  position: absolute;
+  inset: 0;
+  opacity: .5;
+  background-image:
+    linear-gradient(var(--faint) 1px, transparent 1px),
+    linear-gradient(90deg, var(--faint) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(85% 75% at 50% 45%, #000 30%, transparent 92%);
+  -webkit-mask-image: radial-gradient(85% 75% at 50% 45%, #000 30%, transparent 92%);
+}
+
+.stage .kicker {
+  position: absolute;
+  top: 26px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 10.5px;
+  letter-spacing: .42em;
+  text-transform: uppercase;
+  color: var(--accent-soft);
+  z-index: 6;
+  will-change: opacity;
+}
+
+.term {
+  position: absolute;
+  top: 54px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 13px;
+  color: #cfcfd6;
+  background: rgba(255, 255, 255, .03);
+  border: 1px solid var(--faint);
+  border-radius: 9px;
+  padding: 10px 16px;
+  white-space: nowrap;
+  z-index: 6;
+  overflow: hidden;
+  will-change: opacity;
+}
+.term .p { color: var(--accent); }
+.term .cmd {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  vertical-align: bottom;
+}
+
+/* wires */
+svg.wires { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; }
+.rail     { stroke: rgba(255, 255, 255, .12); stroke-width: 1.5; fill: none; }
+.rail-hot { stroke: var(--accent); stroke-width: 1.8; fill: none; filter: drop-shadow(0 0 4px rgba(217, 119, 87, .6)); }
+.spine    { stroke: rgba(255, 255, 255, .10); stroke-width: 1.2; fill: none; }
+.spine-hot{ stroke: var(--accent); stroke-width: 1.4; fill: none; opacity: .55; }
+
+/* phase labels — width 160 centred over the column x via translateX(-80px) */
+.plabel {
+  position: absolute;
+  text-align: center;
+  width: 160px;
+  transform: translateX(-80px);
+  font-size: 11px;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--dim);
+  z-index: 4;
+}
+.plabel .n {
+  display: block;
+  font-size: 8px;
+  letter-spacing: .2em;
+  color: #4d4d56;
+  margin-bottom: 5px;
+}
+
+/* hub node centred on the column x */
+.hub {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  transform: translate(-7px, -7px);
+  background: var(--node);
+  border: 1.5px solid rgba(255, 255, 255, .2);
+  z-index: 4;
+}
+
+/* agent chips — width 152 centred over column x via translateX(-76px) */
+.chip {
+  position: absolute;
+  width: 152px;
+  transform: translateX(-76px);
+  z-index: 5;
+  background: rgba(20, 20, 25, .92);
+  border: 1px solid var(--faint);
+  border-radius: 9px;
+  padding: 9px 12px;
+  cursor: pointer;
+  will-change: transform, opacity;
+  transition: transform .25s, box-shadow .25s, border-color .25s;
+}
+.chip .nm { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: #cfcfd6; letter-spacing: .01em; }
+.chip .role { font-size: 9.5px; color: var(--dim); margin-top: 2px; line-height: 1.25; }
+
+/* hover only enabled once the stage is "ready" (pipeline reached) */
+.stage.ready .chip:hover {
+  border-color: var(--accent) !important;
+  transform: translateX(-76px) translateY(-2px);
+  box-shadow: 0 8px 26px -6px rgba(217, 119, 87, .55) !important;
+}
+.chip.tap {
+  border-color: var(--accent) !important;
+  transform: translateX(-76px) translateY(-2px);
+  box-shadow: 0 8px 26px -6px rgba(217, 119, 87, .55) !important;
+}
+/* spotlight-dim other chips while one is focused */
+.stage.ready.focus .chip:not(:hover):not(.tap) { opacity: .3 !important; filter: saturate(.6); }
+
+/* popover */
+.pop {
+  position: absolute;
+  left: calc(100% + 14px);
+  top: -4px;
+  width: 206px;
+  z-index: 20;
+  background: #0f0f14;
+  border: 1px solid rgba(217, 119, 87, .4);
+  border-radius: 10px;
+  padding: 12px 13px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-6px);
+  transition: .18s;
+  box-shadow: 0 20px 50px -16px rgba(0, 0, 0, .9);
+}
+.chip.left .pop { left: auto; right: calc(100% + 14px); transform: translateX(6px); }
+.stage.ready .chip:hover .pop,
+.chip.tap .pop { opacity: 1; transform: none; }
+
+.pop .pn { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent-soft); letter-spacing: .02em; }
+.pop .pd { font-size: 11px; color: #c4c4cc; line-height: 1.4; margin: 7px 0 9px; }
+.pop .kv { display: flex; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 9.5px; margin-top: 5px; align-items: baseline; }
+.pop .k  { color: var(--dim); letter-spacing: .12em; min-width: 60px; text-transform: uppercase; }
+.pop .v  { color: #dcdce2; }
+.pop .v.acc { color: var(--accent); }
+.pop .div { height: 1px; background: var(--faint); margin: 9px 0; }
+
+.flowcap {
+  position: absolute;
+  bottom: 30px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--dim);
+  z-index: 6;
+}
+.flowcap b { color: var(--ink); font-weight: 500; }
+
+/* ============================================================
+   BEAT 4 · PAYOFF
+   ============================================================ */
+.payoff .inner { max-width: 880px; margin: 0 auto; }
+.arts {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 34px;
+}
+.art {
+  font-size: 11px;
+  color: #cfcfd6;
+  background: rgba(20, 20, 25, .9);
+  border: 1px solid var(--faint);
+  border-radius: 8px;
+  padding: 9px 13px;
+  will-change: transform, opacity;
+}
+.art .d { color: var(--accent); margin-right: 7px; }
+
+.product {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid rgba(217, 119, 87, .5);
+  border-radius: 14px;
+  padding: 20px 30px;
+  background: linear-gradient(180deg, rgba(217, 119, 87, .08), transparent);
+  box-shadow: 0 0 50px -16px rgba(217, 119, 87, .5);
+  will-change: transform, opacity;
+}
+.product .check {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #1a0f0a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  flex: none;
+}
+.product .t { text-align: left; }
+.product .t h3 { font-size: 20px; font-weight: 600; }
+.product .t p  { font-size: 12px; color: var(--dim); margin-top: 2px; }
+
+/* ============================================================
+   BEAT 5 · CTA
+   ============================================================ */
+.cta-btn {
+  display: inline-block;
+  font-size: 13px;
+  letter-spacing: .06em;
+  color: #1a0f0a;
+  background: var(--accent);
+  border: none;
+  border-radius: 10px;
+  padding: 16px 30px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .2s, transform .2s, box-shadow .2s;
+  box-shadow: 0 0 40px -14px rgba(217, 119, 87, .8);
+}
+.cta-btn:hover {
+  background: var(--accent-soft);
+  transform: translateY(-1px);
+  box-shadow: 0 0 60px -12px rgba(217, 119, 87, .9);
+}
+.cta .note {
+  margin-top: 14px;
+  font-size: 10px;
+  color: #4a4a52;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   PERSISTENT SIGNATURE
+   ============================================================ */
+.signature {
+  position: fixed;
+  bottom: 14px;
+  right: 16px;
+  z-index: 50;
+  font-size: 10px;
+  letter-spacing: .14em;
+  color: var(--dim);
+  text-decoration: none;
+  opacity: .42;
+  transition: opacity .25s, color .25s;
+}
+.signature:hover { opacity: .9; color: var(--accent-soft); }
+
+/* ============================================================
+   RESPONSIVE — small screens
+   ============================================================ */
+@media (max-width: 640px) {
+  .signature { font-size: 9px; left: 14px; right: 14px; text-align: center; }
+}
+
+/* ============================================================
+   REDUCED MOTION — make everything static & readable
+   JS also bails out of pin/scrub; these rules guarantee the
+   lit / visible end-state without any animation.
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .scrollhint { display: none; }
+
+  /* No pin/scrub. main.js reparents the premise headline + discipline gate
+     to be direct children of .cinematic (above the stage) so they stack
+     cleanly over the fixed-size pipeline diagram with zero overlap. */
+  .cinematic { min-height: auto; flex-direction: column; padding: 70px 0; gap: 40px; }
+
+  /* premise headline: now a static block above the stage */
+  .premise-overlay {
+    position: static;
+    inset: auto;
+    padding: 0 32px;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  /* the drawn spine + token are noise without motion — hide them */
+  .spine-path, #token { display: none; }
+  .rail-hot, .spine-hot { stroke-dashoffset: 0 !important; }
+
+  /* discipline gate: a static lit row above the stage */
+  #disciplineLayer {
+    position: static;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 28px;
+    padding: 0 24px;
+    pointer-events: none;
+  }
+  .dstation { position: static !important; transform: none !important; opacity: 1 !important; flex-direction: row; width: auto; gap: 9px; }
+  .dstation .dword { color: var(--accent-soft); }
+  .dstation .ddot {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(217, 119, 87, .12), 0 0 10px rgba(217, 119, 87, .5);
+  }
+  .dlabel { position: static; opacity: 1 !important; transform: none !important; flex-basis: 100%; }
+
+  /* pipeline kicker + terminal: shown static at the top of the stage */
+  .stage .kicker { opacity: 1 !important; }
+  .term { opacity: 1 !important; }
+  .term .cmd { max-width: none !important; }
+  .flowcap { opacity: 1 !important; }
+
+  /* pipeline diagram fully lit, in its normal absolute positions */
+  .plabel { opacity: 1 !important; color: var(--accent-soft); }
+  .hub {
+    opacity: 1 !important;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(217, 119, 87, .12), 0 0 14px rgba(217, 119, 87, .5);
+  }
+  .chip {
+    opacity: 1 !important;
+    transform: translateX(-76px) !important;
+    border-color: rgba(217, 119, 87, .55);
+    box-shadow: 0 0 18px -4px rgba(217, 119, 87, .4);
+  }
+  .stage .chip .nm { color: var(--ink); }
+}
