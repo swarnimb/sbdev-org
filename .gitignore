@@ -1,0 +1,6 @@
+# Browser automation / test artifacts
+.playwright-mcp/
+
+# OS / editor
+.DS_Store
+Thumbs.db

@@ -1,0 +1,111 @@
+<!-- © 2026 Swarnim Bagre — All rights reserved. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Claude Code Magic — One builder. A full company.</title>
+<meta name="description" content="A solo founder orchestrating a team of AI specialists through one disciplined pipeline. An animated scroll-cinematic by Swarnim Bagre." />
+
+<!-- Inline SVG favicon: a single clay node on near-black -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230a0a0c'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%23d97757'/%3E%3Ccircle cx='16' cy='16' r='2.5' fill='%23ffd9c7'/%3E%3C/svg%3E" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- Persistent branding signature -->
+  <a class="signature mono" href="https://swarnimbagre.com" target="_blank" rel="noopener">
+    Built by Swarnim Bagre · swarnimbagre.com
+  </a>
+
+  <!-- ===================== HERO (scrolls away normally) ===================== -->
+  <section class="beat hero" id="hero">
+    <div class="bg-grid" aria-hidden="true"></div>
+    <div class="inner">
+      <div class="kick mono">Claude Code Magic</div>
+      <h1>One builder.<br><span class="b">A full company.</span></h1>
+      <p class="sub">A solo founder orchestrating a team of AI specialists — through one disciplined pipeline.</p>
+    </div>
+    <div class="scrollhint mono" id="scrollhint" aria-hidden="true">
+      <span>Scroll</span><span class="arrow"></span>
+    </div>
+  </section>
+
+  <!-- ===================== PINNED CINEMATIC =====================
+       Below the hero: a clay spine drops in → settles to the rail start →
+       Discipline lights in place → hands off to the Pipeline → it runs.
+       ONE pinned stage + ONE scrubbed master timeline (main.js).
+  ============================================================ -->
+  <section class="beat cinematic" id="cinematic">
+    <div class="stage-wrap">
+      <div class="stage" id="stage">
+        <div class="stage-grid" aria-hidden="true"></div>
+
+        <!-- Pipeline kicker + terminal (revealed at the hand-off into the pipeline) -->
+        <div class="kicker mono" id="pipeKicker">The Pipeline</div>
+        <div class="term mono" id="term"><span class="p">$</span> <span class="cmd"></span></div>
+
+        <!-- SVG stage: the spine path, rails, spines, stations, token -->
+        <svg class="wires" viewBox="0 0 1140 680" preserveAspectRatio="none" aria-hidden="true">
+          <!-- the single clay "spine": vertical → elbow → horizontal rail (drawn via dashoffset) -->
+          <path id="spinePath" class="spine-path" fill="none"></path>
+          <g id="rails"></g>
+          <g id="spines"></g>
+          <g id="token" opacity="0">
+            <circle r="16" fill="rgba(217,119,87,.18)"></circle>
+            <circle r="7" fill="#d97757"></circle>
+            <circle r="3" fill="#ffd9c7"></circle>
+          </g>
+        </svg>
+
+        <!-- DOM layer for discipline labels + pipeline hubs/labels/chips -->
+        <div id="disciplineLayer"></div>
+        <div id="layer"></div>
+
+        <div class="flowcap" id="flowcap">Hover any agent to see <b>what it ships</b> and <b>who picks it up</b></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== BEAT 4 · THE PAYOFF ===================== -->
+  <section class="beat payoff" id="payoff">
+    <div class="bg-grid" aria-hidden="true"></div>
+    <div class="inner">
+      <div class="kick mono">From one prompt to shipped</div>
+      <div class="arts">
+        <div class="art mono"><span class="d">▪</span>kickoff-brief.md</div>
+        <div class="art mono"><span class="d">▪</span>plan docs + roadmap</div>
+        <div class="art mono"><span class="d">▪</span>working code</div>
+        <div class="art mono"><span class="d">▪</span>release sign-off</div>
+        <div class="art mono"><span class="d">▪</span>demo + content</div>
+      </div>
+      <div class="product">
+        <div class="check">✓</div>
+        <div class="t">
+          <h3>Shipped product</h3>
+          <p>Built by one person. Orchestrated, not coded by hand.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== BEAT 5 · CTA ===================== -->
+  <section class="beat cta" id="cta">
+    <div class="bg-grid" aria-hidden="true"></div>
+    <div class="inner">
+      <a class="cta-btn mono" href="walkthrough/">Watch it build something real →</a>
+      <div class="note mono">→ routes to /walkthrough (Phase 2 — coming soon)</div>
+    </div>
+  </section>
+
+  <!-- libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
