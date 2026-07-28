@@ -117,6 +117,8 @@ Before doing anything else:
 
 **Always produces `docs/qa-report.md`.** This file must have an explicit status field. `@launch-prep` reads this file — if it does not exist or status is BLOCKED, launch-prep fails that checklist item.
 
+**⚠ Never put credential values in the report.** Passwords, tokens, API keys, and any secret must never appear in it — including inside step-by-step evidence, screenshot descriptions, or browser-verification logs. Reference the credential's source instead — e.g. "entered the password from `docs/testing-setup.md`", never the value itself. As of 2026-07-28 `docs/qa-report.md` is itself on the SEC-07 gitignore list (machine-local; `@launch-prep` reads it from disk), but the rule stands regardless — reports get pasted, shared, and quoted. (Added 2026-07-28 after a live password shipped in a QA report committed under the old convention — FI-06.)
+
 ```markdown
 # QA Report
 

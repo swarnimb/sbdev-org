@@ -165,6 +165,8 @@ stored = base64.b64encode(password.encode())
 - `docs/session-log.md` — operational session data
 - `docs/session-handoff.md` — in-flight session state, may contain sensitive context
 - `docs/framework-issues.md` — internal maintenance log
+- `docs/qa-report.md` — QA findings are a map of untested surfaces and known weaknesses (added 2026-07-28, FI-06 follow-up; `@launch-prep` reads it from local disk — committing was never functionally required)
+- `docs/security-report.md` — security findings are an attacker roadmap (same reasoning; most projects already ignored it by convention)
 - `profile.md` — personal brand identity
 - `content/` — personal brand content
 - `CLAUDE.md` — project framework configuration
