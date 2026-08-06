@@ -43,7 +43,7 @@ Executes tasks as specified. Has authority to stop and flag — does NOT have au
 ```
 1. Complete the task
 2. Log to docs/session-log.md
-3. Mark done in plan.md
+3. Mark done in plan.md — update BOTH: (a) the task-body acceptance-criteria checkboxes, AND (b) the summary status-table row at the top of plan.md (add a row if the task has none). A body marked [x] while the table still shows [ ] is the recurring drift this step exists to prevent.
    → If this task implements auth, payments, or user data: "This feature handles [auth/payments/data]. Run `@security` now — the Completion Order pauses here. Do not proceed to Step 4 and do not issue `/clear` until `@security` returns CLEAR or BLOCKED."
 4. Check: does completing this task finish a feature or phase?
    → If yes: "This completes [feature/phase]. Run `@code-review` before starting the next phase."

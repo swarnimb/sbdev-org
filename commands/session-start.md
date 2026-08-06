@@ -90,6 +90,18 @@ If no plan file exists yet:
 If all tasks in the plan are `[x]` or `[~]` (no remaining `[ ]`):
 "All tasks in the plan are complete. Run `@qa` for shippability sign-off before proceeding."
 
+**Cross-check against the handoff (mandatory — handoff-vs-plan drift detection):**
+
+After identifying the plan's first incomplete `[ ]` task, read it verbatim (header + body + criteria) and compare it to the handoff's "Next Session Constraints" / "Next task" claim from Step 2:
+
+1. **Name check.** Does the handoff name the same task header as the plan's first `[ ]`? If not, surface both the handoff's claim and the plan's actual first `[ ]`.
+2. **Line-number check.** If the handoff cites `line N` for the task header or any criterion, does the plan file actually have that content at line N? Plan files are edited frequently and line numbers go stale silently.
+3. **Criterion-detail check.** If the handoff describes "first incomplete criterion is X" or "task X covers Y", does the plan's first `[ ]` actually match that description? A matching task name with mis-described internal criteria is still a stale handoff.
+
+On any mismatch, surface BOTH (a) what the handoff says, and (b) what the plan actually shows, before stating the next task at Step 4. **Treat the plan as authoritative.** The handoff's task-detail claims are hints only — never substitute the handoff's description for reading the plan task verbatim.
+
+The Step 2 date-only staleness heuristic is retained as a secondary signal (catches "@end-session skipped"). This content cross-check is the primary signal (catches "handoff over-describes or stale-describes the next task"). Two-strikes rule for the handoff-vs-plan-drift family triggered 2026-05-25 — see project-level `docs/framework-issues.md` if present.
+
 ---
 
 ### Step 4 — State the session clearly
