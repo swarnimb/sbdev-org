@@ -19,12 +19,29 @@ Do not skip this step. Unspecced features produce tasks that fail mid-implementa
 
 ---
 
+## Infra Tasks — the PRD pre-check does not apply
+
+**Not everything in a plan is a product feature.** Test-harness work, build tooling, CI, observability bootstrapping, dependency upgrades and defect fixes in non-product code are real plan items with no PRD entry — and forcing one in pollutes the product spec with infrastructure.
+
+**A task is `infra` when it changes no user-visible behavior and no product surface.** For those:
+
+- Skip Step 1's "which feature in `docs/prd.md`" question and skip PRD validation entirely.
+- Do NOT route the builder to `@cpo`. There is nothing for a product owner to spec.
+- Everything else is unchanged: Steps 2–7 apply as written, the task block uses the same one-shot-ready standard, and builder approval is still required before writing to the plan.
+- **Record the classification inside the task block** — one line stating it is an infra task and therefore has no PRD entry — so a future reader does not mistake the absence of a spec for an oversight.
+
+If you are unsure whether something is a feature or infra, ask the builder. When a task changes what a user sees, it is a feature and the PRD pre-check applies.
+
+**Why this exists:** the PRD gate was written for features and silently blocked legitimate infra work. Twice — T10.5 (testing harness, 2026-05-07) and T47 (e2e teardown, 2026-08-06) — the correct move was to bypass the command, which is a sign the command was wrong, not the work. Logged in `swarnimbagre.com/docs/framework-issues.md` under "No command for non-feature plan additions"; this section is the two-strikes fix.
+
+---
+
 ## Pre-checks
 
 Before doing anything, verify all three conditions:
 
 - [ ] `manifest.md` exists in the project root
-- [ ] `docs/prd.md` exists
+- [ ] `docs/prd.md` exists — **feature tasks only**; see "Infra Tasks" above
 - [ ] `docs/architecture.md` exists
 
 **If `manifest.md` not found:**
@@ -41,6 +58,8 @@ Before doing anything, verify all three conditions:
 ## Process
 
 ### Step 1 — Identify the feature
+
+**Infra task? Skip this step entirely** — see "Infra Tasks" above. Go to Step 2.
 
 Ask the builder: "Which feature in `docs/prd.md` are we planning tasks for?"
 
@@ -150,8 +169,8 @@ Confirm: "Added [N] tasks to `docs/plan.md` for [feature name]. If you have a `d
 
 ## Rules
 
-- Pre-check is mandatory and all three conditions must pass — no exceptions
-- Feature must be specced in `docs/prd.md` before task planning — unspecced features produce bad tasks
+- Pre-check is mandatory: `manifest.md` and `docs/architecture.md` must always exist. The `docs/prd.md` condition applies to FEATURE tasks only — infra tasks skip it (see "Infra Tasks")
+- A **feature** must be specced in `docs/prd.md` before task planning — unspecced features produce bad tasks. An **infra** task has no PRD entry by design, and its task block must say so
 - Apply the same one-shot-ready task standard as `@plan` — tasks must be executable without clarifying questions
 - Embed relevant rules in acceptance criteria (SEC-XX, EH-XX, CQ-XX)
 - Never write to plan.md without approval
